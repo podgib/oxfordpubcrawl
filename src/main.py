@@ -12,7 +12,7 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class PubsHandler(webapp2.RequestHandler):
   def show_all_pubs(self):
-    pubs = Pub.all().run()
+    pubs = Pub.all().order('name').run()
     values = {'pubs' : pubs, 'logged_in' : False}
     template = jinja_environment.get_template('templates/pubs.html')
     self.response.out.write(template.render(values))
@@ -32,10 +32,13 @@ class PubsHandler(webapp2.RequestHandler):
 class UserHandler(webapp2.RequestHandler):
   def get(self, user_id=None):
     current_user = get_current_user()
+    user = None
     if user_id:
       user = User.get_by_id(int(user_id))
-    else:
-      user = current_user
+    elif current_user:
+      return self.redirect('/profile/' + str(current_user.key().id()))
+    if not user:
+      return self.redirect('/')
     visits = db.GqlQuery('SELECT __key__ FROM Visit WHERE ANCESTOR IS :1 AND visited = :2', user, True).count()
     values = {'visits' : visits, 'user' : user, 'logged_in' : current_user is not None}
     template = jinja_environment.get_template('templates/user.html')
@@ -48,6 +51,8 @@ class VisitedHandler(webapp2.RequestHandler):
       user = User.get_by_id(int(user_id))
     else:
       user = current_user
+    if not user:
+      return self.redirect('/')
     visits = Visit.all().ancestor(user).filter('visited =', True).fetch(500)
     visits = sorted(visits, key = lambda v: v.pub.name.lower())
     values = {'visited' : visits, 'user' : user, 'logged_in' : current_user is not None, 'own_page' : user_id is None}
@@ -61,6 +66,8 @@ class NotVisitedHandler(webapp2.RequestHandler):
       user = User.get_by_id(int(user_id))
     else:
       user = current_user
+    if not user:
+      return self.redirect('/')
     visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
     visits = sorted(visits, key = lambda v: v.pub.name.lower())
     values = {'not_visited' : visits, 'user' : user, 'logged_in' : current_user is not None}
