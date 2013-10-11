@@ -3,7 +3,7 @@ from google.appengine.api import users
 import webapp2
 from session import Session
 
-DEV_USERS = True
+DEV_USERS = False
 
 class User(db.Model):
   name = db.StringProperty(required=True)
