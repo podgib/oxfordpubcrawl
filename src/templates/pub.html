@@ -5,12 +5,24 @@
 <p>Visited by {{visits}} people</p>
 
 {% if user %}
-<form method="POST" action="/ajax/visitpub">
-  <input type="hidden" name="pub_id" value="{{pub.key().id()}}">
-  <input type="checkbox" name="visited" {% if visited %} checked {% endif %}>
-  <input type="submit" value="go">
-
+<form>
+  <input id="visited" type="checkbox" name="visited" {% if visited %} checked {% endif %}>
 </form>
 {% endif %}
 
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+  function setVisited() {
+    data = {'pub_id':{{pub.key().id()}}};
+    if ($('#visited').is(':checked')) {
+      data['visited'] = $('#visited').val();
+    }
+    $.post('/ajax/visitpub', data);
+  }
+  $(function() {
+    $('#visited').change(function() {setVisited();});
+  });
+</script>
 {% endblock %}
