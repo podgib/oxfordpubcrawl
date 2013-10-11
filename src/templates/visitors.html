@@ -1,0 +1,12 @@
+{% extends 'templates/layout.html' %}
+{% block content %}
+<h1>{{pub.name}}</h1>
+
+<ul data-role="listview">
+  <li data-role="header">Visitors</li>
+  {% for visit in visits %}
+  <li><a href="/profile/{{visit.parent().key().id()}}">{{visit.parent().name}}</a></li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

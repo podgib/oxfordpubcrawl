@@ -2,13 +2,20 @@
 
 {% block content %}
 <h1>{{pub.name}}</h1>
-<p>Visited by {{visits}} people</p>
+<p>Visited by {{visit_count}} people</p>
 
 {% if user %}
 <form>
   <label for="visited">I've been here</label>
   <input id="visited" type="checkbox" name="visited" {% if visited %} checked {% endif %}>
 </form>
+<p>&nbsp;</p>
+{% endif %}
+
+{% if visit_count > 0 %}
+<ul data-role="listview">
+  <li><a href="/pub/{{pub.key().id()}}/visitors">People who have been here</a></li>
+</ul>
 {% endif %}
 
 {% endblock %}

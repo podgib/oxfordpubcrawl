@@ -23,7 +23,7 @@ class PubsHandler(webapp2.RequestHandler):
       return self.show_all_pubs()
     visited = Visit.all().ancestor(user).filter('visited =', True).fetch(10)
     not_visited = Visit.all().ancestor(user).filter('visited =',False).fetch(10)
-    values = {'visited' : visited, 'not_visited' : not_visited, 'logged_in' : True}
+    values = {'visited' : visited, 'not_visited' : not_visited, 'logged_in' : True, 'own_page' : True}
     template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values)) 
 
@@ -68,14 +68,23 @@ class PubHandler(webapp2.RequestHandler):
   def get(self, pub_id):
     user = get_current_user()
     pub = Pub.get_by_id(int(pub_id))
-    visits = db.GqlQuery('SELECT __key__ FROM Visit WHERE visited = :1 AND pub = :2', True, pub).count()
-    values = {'pub' : pub, 'visits' : visits, 'user' : user}
+    visit_count = db.GqlQuery('SELECT __key__ FROM Visit WHERE visited = :1 AND pub = :2', True, pub).count()
+    values = {'pub' : pub, 'visit_count' : visit_count, 'user' : user}
     if user:
       visit = Visit.all().ancestor(user).filter('pub =', pub).get()
       values['visited'] = visit.visited
       values['logged_in'] = True
 
     template = jinja_environment.get_template('templates/pub.html')
+    self.response.out.write(template.render(values))
+
+class PubVisitsHandler(webapp2.RequestHandler):
+  def get(self, pub_id):
+    current_user = get_current_user()
+    pub = Pub.get_by_id(int(pub_id))
+    visits = Visit.all().filter('pub =', pub).filter('visited =', True).run()
+    values = {'pub' : pub, 'visits' : visits, 'logged_in' : current_user is not None}
+    template = jinja_environment.get_template('templates/visitors.html')
     self.response.out.write(template.render(values))
     
     
@@ -86,6 +95,7 @@ app = webapp2.WSGIApplication([
   ('/notvisited', NotVisitedHandler),
   ('/user',UserHandler),
   ('/profile',UserHandler),
+  webapp2.Route('/pub/<pub_id>/visitors', handler=PubVisitsHandler),
   webapp2.Route('/visited/<user_id>', handler=VisitedHandler),
   webapp2.Route('/user/<user_id>',handler=UserHandler),
   webapp2.Route('/profile/<user_id>',handler=UserHandler),
