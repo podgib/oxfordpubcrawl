@@ -77,10 +77,6 @@ class PubHandler(webapp2.RequestHandler):
 
     template = jinja_environment.get_template('templates/pub.html')
     self.response.out.write(template.render(values))
-
-class LoginHandler(webapp2.RequestHandler):
-  def get(self):
-    self.redirect('/_ah/login')
     
     
 app = webapp2.WSGIApplication([
@@ -88,7 +84,6 @@ app = webapp2.WSGIApplication([
   ('/pubs',PubsHandler),
   ('/visited', VisitedHandler),
   ('/notvisited', NotVisitedHandler),
-  ('/login',LoginHandler),
   ('/user',UserHandler),
   ('/profile',UserHandler),
   webapp2.Route('/user/<user_id>',handler=UserHandler),

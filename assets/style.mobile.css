@@ -5,3 +5,11 @@
   border: none !important;
   box-shadow: none !important;
 }
+
+#facebook-button {
+  width: 216px;
+  height: 42px;
+  background: url(images/facebook-button-m.png) no-repeat;
+  padding: 0px;
+  margin-bottom: 5px;
+}

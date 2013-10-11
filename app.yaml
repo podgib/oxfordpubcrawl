@@ -12,6 +12,9 @@ handlers:
 - url: /assets
   static_dir: assets
 
+- url: /auth.*
+  script: src.auth.app
+
 - url: /ajax.*
   script: src.ajax.app
 
