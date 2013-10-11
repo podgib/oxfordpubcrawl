@@ -1,0 +1,10 @@
+{% block content %}
+
+<h1>All Pubs</h1>
+<ul>
+  {% for pub in pubs %}
+  <li><a href='/pub/{{pub.key().id()}}'>{{pub.name}}</a></li>
+  {% endfor %}
+</ul>
+
+{% endblock content %}
