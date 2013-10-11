@@ -91,10 +91,17 @@ class PubVisitsHandler(webapp2.RequestHandler):
     values = {'pub' : pub, 'visits' : visits, 'logged_in' : current_user is not None}
     template = jinja_environment.get_template('templates/visitors.html')
     self.response.out.write(template.render(values))
+
+class LandingHandler(webapp2.RequestHandler):
+  def get(self):
+    if get_current_user():
+      self.redirect('/profile')
+    else:
+      self.redirect('/pubs')
     
     
 app = webapp2.WSGIApplication([
-  ('/',PubsHandler),
+  ('/',LandingHandler),
   ('/pubs',PubsHandler),
   ('/visited', VisitedHandler),
   ('/notvisited', NotVisitedHandler),
