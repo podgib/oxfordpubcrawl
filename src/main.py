@@ -47,7 +47,7 @@ class VisitedHandler(webapp2.RequestHandler):
     else:
       user = current_user
     visits = Visit.all().ancestor(user).filter('visited =', True).run()
-    values = {'visited' : visits, 'user' : user, 'logged_in' : current_user is not None}
+    values = {'visited' : visits, 'user' : user, 'logged_in' : current_user is not None, 'own_page' : user_id is None}
     template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values))
 
@@ -86,6 +86,7 @@ app = webapp2.WSGIApplication([
   ('/notvisited', NotVisitedHandler),
   ('/user',UserHandler),
   ('/profile',UserHandler),
+  webapp2.Route('/visited/<user_id>', handler=VisitedHandler),
   webapp2.Route('/user/<user_id>',handler=UserHandler),
   webapp2.Route('/profile/<user_id>',handler=UserHandler),
   webapp2.Route('/pub/<pub_id>',handler=PubHandler)],debug=True)

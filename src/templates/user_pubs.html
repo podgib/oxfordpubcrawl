@@ -4,7 +4,11 @@
 
 {% for visit in visited %}
 {% if loop.first %}
+{% if own_page %}
 <h1>Pubs I've Visited</h1>
+{% else %}
+<h1>Pubs Visited by {{user.name}}</h1>
+{% endif %}
 <ul data-role="listview">
 {% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
