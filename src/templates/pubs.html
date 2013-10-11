@@ -4,7 +4,7 @@
 <a href='/login'>Login</a>
 
 <h1>All Pubs</h1>
-<ul>
+<ul data-role="listview">
   {% for pub in pubs %}
   <li><a href='/pub/{{pub.key().id()}}'>{{pub.name}}</a></li>
   {% endfor %}

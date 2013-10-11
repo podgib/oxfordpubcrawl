@@ -3,14 +3,14 @@
 {% block content %}
 
 <h1>Pubs I've Visited</h1>
-<ul>
+<ul data-role="listview">
   {% for visit in visited %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
   {% endfor %}
 </ul>
 
 <h1>Still To Visit</h1>
-<ul>
+<ul data-role="listview">
   {% for visit in not_visited %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
   {% endfor %}
