@@ -5,7 +5,7 @@
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '571548629560527', // App ID
-      channelUrl : '//localhost:9080/static/channel.html', // Channel File
+      channelUrl : '//oxfordpubcrawl.appspot.com/static/channel.html', // Channel File
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
@@ -30,6 +30,7 @@
   }
 </script>
 
+<p>Keep track of which pubs you've visited, and where you still need to have a drink</p>
 <div id="facebook-button" onClick="fblogin()"></div>
 
 {% if show_dev_login %}<p>or <a href="{{login_url}}" data-ajax="false">Login (Dev)</a></p>{% endif %}
