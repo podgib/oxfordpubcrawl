@@ -6,6 +6,7 @@
 
 {% if user %}
 <form>
+  <label for="visited">I've been here</label>
   <input id="visited" type="checkbox" name="visited" {% if visited %} checked {% endif %}>
 </form>
 {% endif %}
