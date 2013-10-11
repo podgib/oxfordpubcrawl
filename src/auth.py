@@ -111,8 +111,24 @@ class SignupHandler(webapp2.RequestHandler):
     self.response.set_cookie("session",rand_string,expires=datetime.datetime.now()+datetime.timedelta(days=30));
     self.redirect('/')
 
+class LogoutHandler(webapp2.RequestHandler):
+  def get(self):
+    if not get_current_user():
+      return self.redirect('/')
+    if DEV_USERS and users.get_current_user():
+      self.redirect(users.create_logout_url('/'))
+    else:
+      try:
+        token = get_token()
+        session = Session.getSession(token)
+        session.remove()
+      finally:
+        self.response.set_cookie("session", "",expires=datetime.datetime.now())
+        self.redirect("/")
+
 app = webapp2.WSGIApplication([
   ('/auth/login',LoginHandler),
   ('/auth/fblogin',FbLoginHandler),
   ('/auth/signup',SignupHandler),
+  ('/auth/logout',LogoutHandler),
   ('/auth/devlogin',DevLoginHandler)],debug=True)
