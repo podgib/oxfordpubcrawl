@@ -41,10 +41,16 @@ class UserHandler(webapp2.RequestHandler):
     
 class PubHandler(webapp2.RequestHandler):
   def get(self, pub_id):
+    user = get_current_user()
     pub = Pub.get_by_id(int(pub_id))
     visits = db.GqlQuery('SELECT __key__ FROM Visit WHERE visited = :1 AND pub = :2', True, pub).count()
-    self.response.out.write(pub.name)
-    self.response.out.write(visits)
+    values = {'pub' : pub, 'visits' : visits, 'user' : user}
+    if user:
+      visit = Visit.all().ancestor(user).filter('pub =', pub).get()
+      values['visited'] = visit.visited
+
+    template = jinja_environment.get_template('templates/pub.html')
+    self.response.out.write(template.render(values))
 
 class LoginHandler(webapp2.RequestHandler):
   def get(self):

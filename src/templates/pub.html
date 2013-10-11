@@ -1,0 +1,16 @@
+{% extends 'templates/layout.html' %}
+
+{% block content %}
+<h1>{{pub.name}}</h1>
+<p>Visited by {{visits}} people</p>
+
+{% if user %}
+<form method="POST" action="/ajax/visitpub">
+  <input type="hidden" name="pub_id" value="{{pub.key().id()}}">
+  <input type="checkbox" name="visited" {% if visited %} checked {% endif %}>
+  <input type="submit" value="go">
+
+</form>
+{% endif %}
+
+{% endblock %}
