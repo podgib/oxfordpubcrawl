@@ -15,6 +15,10 @@ handlers:
 - url: /auth.*
   script: src.auth.app
 
+- url: /admin.*
+  script: src.admin.app
+  login: admin
+
 - url: /ajax.*
   script: src.ajax.app
 
