@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from google.appengine.api import memcache
 
 import webapp2
 import jinja2
@@ -12,7 +13,10 @@ jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.di
 
 class PubsHandler(webapp2.RequestHandler):
   def show_all_pubs(self):
-    pubs = Pub.all().order('name').run()
+    pubs = memcache.get('all-pubs-list')
+    if not pubs:
+      pubs = Pub.all().order('name').fetch(500)
+      memcache.set('all-pubs-list', pubs)
     values = {'pubs' : pubs, 'logged_in' : False}
     template = jinja_environment.get_template('templates/pubs.html')
     self.response.out.write(template.render(values))
