@@ -2,18 +2,26 @@
 
 {% block content %}
 
+{% for visit in visited %}
+{% if loop.first %}
 <h1>Pubs I've Visited</h1>
 <ul data-role="listview">
-  {% for visit in visited %}
+{% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
-  {% endfor %}
+{% if loop.last %}
 </ul>
+{% endif %}
+{% endfor %}
 
-<h1>Still To Visit</h1>
+{% for visit in not_visited %}
+{% if loop.first %}
+<h1>Still to Visit</h1>
 <ul data-role="listview">
-  {% for visit in not_visited %}
+{% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
-  {% endfor %}
+{% if loop.last %}
 </ul>
+{% endif %}
+{% endfor %}
 
 {% endblock content %}

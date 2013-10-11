@@ -23,29 +23,29 @@
       </li>
       {% if user %}
       <li data-icon="false">
-        <a href="/profile" data-transition="slide">
+        <a href="/profile" data-transition="slide" data-ajax="false">
           Me
         </a>
       </li>
       <li data-icon="false">
-        <a href="/visited" data-transition="slide">
+        <a href="/visited" data-transition="slide" data-ajax="false">
           Pubs I've Visited
         </a>
       </li>
       <li data-icon="false">
-        <a href="/notvisited" data-transition="slide">
+        <a href="/notvisited" data-transition="slide" data-ajax="false">
           Pubs to Visit
         </a>
       </li>
       {% else %}
       <li data-icon="false">
-        <a href="/login" data-transition="slide">
+        <a href="/login" data-transition="slide" data-ajax="false">
           Login/Sign up
         </a>
       </li>
       {% endif %}
       <li data-icon="false">
-        <a href="/pubs" data-transition="slide">
+        <a href="/pubs" data-transition="slide" data-ajax="false">
           All Pubs
         </a>
       </li>
@@ -69,10 +69,9 @@
     {% endblock %}
   </div>
 
-</div>
-
 {% block script %}
 {% endblock script %}
+</div>
 
 </body>
 

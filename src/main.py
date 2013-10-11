@@ -23,7 +23,7 @@ class PubsHandler(webapp2.RequestHandler):
       return self.show_all_pubs()
     visited = Visit.all().ancestor(user).filter('visited =', True).fetch(10)
     not_visited = Visit.all().ancestor(user).filter('visited =',False).fetch(10)
-    values = {'visited' : visited, 'not_visited' : not_visited}
+    values = {'visited' : visited, 'not_visited' : not_visited, 'user' : user}
     template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values)) 
 
@@ -36,6 +36,28 @@ class UserHandler(webapp2.RequestHandler):
     visits = db.GqlQuery('SELECT __key__ FROM Visit WHERE ANCESTOR IS :1 AND visited = :2', user, True).count()
     values = {'visits' : visits, 'user' : user}
     template = jinja_environment.get_template('templates/user.html')
+    self.response.out.write(template.render(values))
+
+class VisitedHandler(webapp2.RequestHandler):
+  def get(self, user_id=None):
+    if user_id:
+      user = User.get_by_id(int(user_id))
+    else:
+      user = get_current_user()
+    visits = Visit.all().ancestor(user).filter('visited =', True).run()
+    values = {'visited' : visits, 'user' : user}
+    template = jinja_environment.get_template('templates/user_pubs.html')
+    self.response.out.write(template.render(values))
+
+class NotVisitedHandler(webapp2.RequestHandler):
+  def get(self, user_id=None):
+    if user_id:
+      user = User.get_by_id(int(user_id))
+    else:
+      user = get_current_user()
+    visits = Visit.all().ancestor(user).filter('visited =', False).run()
+    values = {'not_visited' : visits, 'user' : user}
+    template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values))
     
     
@@ -60,6 +82,8 @@ class LoginHandler(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
   ('/',PubsHandler),
   ('/pubs',PubsHandler),
+  ('/visited', VisitedHandler),
+  ('/notvisited', NotVisitedHandler),
   ('/login',LoginHandler),
   ('/user',UserHandler),
   ('/profile',UserHandler),
