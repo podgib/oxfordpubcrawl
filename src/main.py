@@ -25,10 +25,16 @@ class PubsHandler(webapp2.RequestHandler):
     user = get_current_user()
     if not user:
       return self.show_all_pubs()
-    visited = Visit.all().ancestor(user).filter('visited =', True).fetch(500)
-    visited = sorted(visited, key = lambda v: v.pub.name.lower())
-    not_visited = Visit.all().ancestor(user).filter('visited =',False).fetch(500)
-    not_visited = sorted(not_visited, key = lambda v: v.pub.name.lower())
+    visited = memcache.get('visited-' + str(user.key().id()))
+    if not visited:
+      visited = Visit.all().ancestor(user).filter('visited =', True).fetch(500)
+      visited = sorted(visited, key = lambda v: v.pub.name.lower())
+      memcache.set('visited-' + str(user.key().id()), visited)
+    not_visited = memcache.get('not-visited-' + str(user.key().id()))
+    if not not_visited:
+      not_visited = Visit.all().ancestor(user).filter('visited =',False).fetch(500)
+      not_visited = sorted(not_visited, key = lambda v: v.pub.name.lower())
+      memcache.set('not-visited-' + str(user.key().id()), not_visited)
     values = {'visited' : visited, 'not_visited' : not_visited, 'logged_in' : True, 'own_page' : True}
     template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values)) 
@@ -57,8 +63,11 @@ class VisitedHandler(webapp2.RequestHandler):
       user = current_user
     if not user:
       return self.redirect('/')
-    visits = Visit.all().ancestor(user).filter('visited =', True).fetch(500)
-    visits = sorted(visits, key = lambda v: v.pub.name.lower())
+    visits = memcache.get('visited-' + str(user.key().id()))
+    if not visits:
+      visits = Visit.all().ancestor(user).filter('visited =', True).fetch(500)
+      visits = sorted(visits, key = lambda v: v.pub.name.lower())
+      memcache.set('visited-' + str(user.key().id()), visits)
     values = {'visited' : visits, 'user' : user, 'logged_in' : current_user is not None, 'own_page' : user_id is None}
     template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values))
@@ -72,8 +81,11 @@ class NotVisitedHandler(webapp2.RequestHandler):
       user = current_user
     if not user:
       return self.redirect('/')
-    visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
-    visits = sorted(visits, key = lambda v: v.pub.name.lower())
+    visits = memcache.get('not-visited-' + str(user.key().id()))
+    if not visits:
+      visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
+      visits = sorted(visits, key = lambda v: v.pub.name.lower())
+      memcache.set('not-visited-' + str(user.key().id()), visits)
     values = {'not_visited' : visits, 'user' : user, 'logged_in' : current_user is not None}
     template = jinja_environment.get_template('templates/user_pubs.html')
     self.response.out.write(template.render(values))

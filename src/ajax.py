@@ -1,3 +1,4 @@
+from google.appengine.api import memcache
 import webapp2
 
 from models.pub import *
@@ -17,6 +18,8 @@ class SetVisitHandler(webapp2.RequestHandler):
     visited = bool(self.request.get('visited'))
     visit.visited = visited
     visit.put()
+    memcache.delete('visited-' + str(user.key().id()))
+    memcache.delete('not-visited-' + str(user.key().id()))
 
 app = webapp2.WSGIApplication([
   ('/ajax/visitpub',SetVisitHandler)],debug=True)
