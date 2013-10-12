@@ -12,11 +12,14 @@
 <p>&nbsp;</p>
 {% endif %}
 
-{% if visit_count > 0 %}
 <ul data-role="listview">
+  {% if visit_count > 0 %}
   <li><a href="/pub/{{pub.key().id()}}/visitors">People who have been here</a></li>
+  {% endif %}
+  {% if lat and long %}
+  <li><a href="http://maps.google.co.uk/maps?q={{lat}}+{{long}}">Map</a></li>
+  {% endif %}
 </ul>
-{% endif %}
 
 {% endblock %}
 

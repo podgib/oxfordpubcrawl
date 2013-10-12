@@ -102,6 +102,20 @@ class PubHandler(webapp2.RequestHandler):
       values['visited'] = visit.visited
       values['logged_in'] = True
 
+    if pub.latitude and pub.longitude:
+      lat = str(abs(pub.latitude))
+      if pub.latitude >= 0:
+        lat += 'N'
+      else:
+        lat += 'S'
+      long = str(abs(pub.longitude))
+      if pub.longitude >= 0:
+        long += 'E'
+      else:
+        long += 'W'
+      values['lat'] = lat
+      values['long'] = long
+
     template = jinja_environment.get_template('templates/pub.html')
     self.response.out.write(template.render(values))
 
