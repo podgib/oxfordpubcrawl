@@ -131,7 +131,7 @@ class LandingHandler(webapp2.RequestHandler):
     if get_current_user():
       self.redirect('/profile')
     else:
-      self.redirect('/pubs')
+      self.redirect('/nearby')
     
     
 app = webapp2.WSGIApplication([
