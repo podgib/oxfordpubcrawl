@@ -35,6 +35,36 @@ class AddPubHandler(webapp2.RequestHandler):
       v.put()
     self.response.out.write('added ' + name)
 
+class CleanVisitsHandler(webapp2.RequestHandler):
+  def get(self):
+    visits = Visit.all().run()
+    for v in visits:
+      try:
+        p = v.pub
+      except:
+        v.delete()
+
+    self.response.out.write('success')
+
+class CleanPubsHandler(webapp2.RequestHandler):
+  def get(self):
+    for p in Pub.all().run():
+      if not p.latitude:
+        p.delete()
+    self.response.out.write('success')
+
+class UpdateSchemaHandler(webapp2.RequestHandler):
+  def get(self):
+    pubs = Pub.all().run()
+    for p in pubs:
+      p.latitude = None
+      p.longitude = None
+      p.put()
+    self.response.out.write('success')
+
 
 app = webapp2.WSGIApplication([
-  ('/admin/addpub',AddPubHandler)],debug=True)
+  ('/admin/addpub',AddPubHandler),
+  ('/admin/updateschema',UpdateSchemaHandler),
+  ('/admin/cleanpubs',CleanPubsHandler),
+  ('/admin/clean', CleanVisitsHandler)],debug=True)
