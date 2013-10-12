@@ -5,9 +5,6 @@
 {% for visit in visited %}
 {% if loop.first %}
 {% if own_page %}
-<ul data-role="listview">
-  <li><a href="/nearby">See nearby pubs</a></li>
-</ul>
 <h1>Pubs I've Visited</h1>
 {% else %}
 <h1>Pubs Visited by {{user.name}}</h1>
