@@ -34,6 +34,10 @@ class FbLoginHandler(webapp2.RequestHandler):
     profile=json.load(urllib.urlopen("https://graph.facebook.com/me?"+
       urllib.urlencode({'access_token': fbtoken})))
     fb_id=profile["id"]
+
+    # hack for joint account with me and dave
+    if fb_id == '609719725':
+      fb_id = '613397287'
     first_name=profile["first_name"]
     surname=profile["last_name"]
     user=User.all().filter("fb_id =",fb_id).get()
