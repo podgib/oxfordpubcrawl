@@ -3,8 +3,10 @@
 <h1>{{user.name}}</h1>
 <p>Pubs visited: {{visits}}</p>
 <p>&nbsp;</p>
-
 <ul data-role="listview">
+  {% if own_page %}
+  <li data-theme="b"><a href="/nearby">Where to next?</a></li>
+  {% endif %}
   <li><a href="/visited/{{user.key().id()}}">Pubs visited by {{user.name}}</a></li>
 </ul>
 

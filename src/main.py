@@ -50,7 +50,7 @@ class UserHandler(webapp2.RequestHandler):
     if not user:
       return self.redirect('/')
     visits = db.GqlQuery('SELECT __key__ FROM Visit WHERE ANCESTOR IS :1 AND visited = :2', user, True).count()
-    values = {'visits' : visits, 'user' : user, 'logged_in' : current_user is not None}
+    values = {'visits' : visits, 'user' : user, 'logged_in' : current_user is not None, 'own_page' : user.key() == current_user.key()}
     template = jinja_environment.get_template('templates/user.html')
     self.response.out.write(template.render(values))
 
