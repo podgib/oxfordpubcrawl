@@ -115,6 +115,13 @@ class PubVisitsHandler(webapp2.RequestHandler):
     template = jinja_environment.get_template('templates/visitors.html')
     self.response.out.write(template.render(values))
 
+class NearbyHandler(webapp2.RequestHandler):
+  def get(self):
+    user = get_current_user()
+    values = {'logged_in' : user is not None}
+    template = jinja_environment.get_template('templates/nearby.html')
+    self.response.out.write(template.render(values))
+
 class LandingHandler(webapp2.RequestHandler):
   def get(self):
     if get_current_user():
@@ -130,6 +137,7 @@ app = webapp2.WSGIApplication([
   ('/notvisited', NotVisitedHandler),
   ('/user',UserHandler),
   ('/profile',UserHandler),
+  ('/nearby',NearbyHandler),
   webapp2.Route('/pub/<pub_id>/visitors', handler=PubVisitsHandler),
   webapp2.Route('/visited/<user_id>', handler=VisitedHandler),
   webapp2.Route('/user/<user_id>',handler=UserHandler),

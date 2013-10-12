@@ -18,7 +18,15 @@ class AddPubHandler(webapp2.RequestHandler):
     if p:
       self.response.out.write('already exists')
       return
-    p = Pub(name=name)
+    nlat = None
+    nlong = None
+    lat = self.request.get('lat')
+    long = self.request.get('long')
+    if lat:
+      nlat = float(lat)
+    if long:
+      nlong = float(long)
+    p = Pub(name=name, latitude=nlat, longitude=nlong)
     p.put()
 
     users = User.all().run()

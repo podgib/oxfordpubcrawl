@@ -1,0 +1,65 @@
+{% extends 'templates/layout.html' %}
+{% block content %}
+{% if logged_in %}
+<h2>Closest pubs I haven't been to</h2>
+{% else %}
+<h2>Nearby Pubs</h2>
+<p><a href="/auth/login">Log in</a> to see the closest pubs you haven't been to</p>
+{% endif %}
+
+<img id="loader" src="/assets/images/ajax-loader.gif"/>
+<div id='loc-error'></div>
+<ul id="pub-list" data-role="listview">
+</ul>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(showPubs, locError, {'timeout':20000});
+    } else {
+      $('#loc-error').html('<p>Your browser does not support geolocation</p>');
+      $('#loader').hide();
+    }
+  }
+
+  function showPubs(location) {
+    $.get('/ajax/nearby?lat=' + location.coords.latitude + '&long=' + location.coords.longitude, function(data) {
+      var list = $('#pub-list');
+      var json = $.parseJSON(data);
+      var html = '';
+      $.each(json, function(i, pub) {
+        html = html + '<li><a href="/pub/' + pub.id + '">' + pub.name + '</a></li>';
+      });
+      $('#pub-list').html(html);
+      $('#pub-list').listview('refresh');
+      $('#loader').hide();
+    });
+  }
+  
+  function locError(error) {
+    var msg = '';
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        msg = 'We need access to your location to show the closest pubs.';
+        break;
+      case error.POSITION_UNAVAILABLE:
+        msg = 'Could not find your location.';
+        break;
+      case error.TIMEOUT:
+        msg = 'Location request timed out.';
+        break;
+      case error.UNKNOWN_ERROR:
+        msg = 'Something went wrong.';
+        break;
+    }
+    $('#loc-error').html('<p>' + msg + '</p>');
+    $('#loader').hide();
+  }
+  
+  $(function() {
+    getLocation();
+  });
+</script>
+{% endblock %}
