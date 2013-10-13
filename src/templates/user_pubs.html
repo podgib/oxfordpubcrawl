@@ -2,30 +2,24 @@
 
 {% block content %}
 
+<ul data-role="listview" data-filter="true" data-filter-placeholder="Find a pub..." data-filter-theme="a">
 {% for visit in visited %}
 {% if loop.first %}
 {% if own_page %}
-<h1>Pubs I've Visited</h1>
+<li data-role="list-divider" data-theme="b">Pubs I've Visited</li>
 {% else %}
-<h1>Pubs Visited by {{user.name}}</h1>
+<li data-role="list-divider" data-theme="b">Pubs Visited by {{user.name}}</li>
 {% endif %}
-<ul data-role="listview">
 {% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
-{% if loop.last %}
-</ul>
-{% endif %}
 {% endfor %}
 
 {% for visit in not_visited %}
 {% if loop.first %}
-<h1>Still to Visit</h1>
-<ul data-role="listview">
+<li data-role="list-divider" data-theme="b">Still to Visit</li>
 {% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
-{% if loop.last %}
-</ul>
-{% endif %}
 {% endfor %}
+</ul>
 
 {% endblock content %}
