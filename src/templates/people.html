@@ -1,0 +1,10 @@
+{% extends 'templates/layout.html' %}
+
+{% block content %}
+<h2>Most prolific pub goers</h2>
+<ul data-role="listview" data-filter="true" data-filter-placeholder="Find someone..." data-filter-theme="a">
+  {% for u in users %}
+    <li><a href="/profile/{{u.id}}">{{u.name}}<span class="ui-li-count">{{u.count}}</span></a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

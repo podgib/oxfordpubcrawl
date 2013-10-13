@@ -8,6 +8,7 @@ import os
 from models.pub import *
 from models.visit import Visit
 from models.user import *
+from utilities import get_user_counts
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -50,7 +51,11 @@ class UserHandler(webapp2.RequestHandler):
     if not user:
       return self.redirect('/')
     visits = db.GqlQuery('SELECT __key__ FROM Visit WHERE ANCESTOR IS :1 AND visited = :2', user, True).count()
-    values = {'visits' : visits, 'user' : user, 'logged_in' : current_user is not None, 'own_page' : user.key() == current_user.key()}
+    if current_user:
+      own_page = (user.key() == current_user.key())
+    else:
+      own_page = False
+    values = {'visits' : visits, 'user' : user, 'logged_in' : current_user is not None, 'own_page' : own_page}
     template = jinja_environment.get_template('templates/user.html')
     self.response.out.write(template.render(values))
 
@@ -126,6 +131,14 @@ class NearbyHandler(webapp2.RequestHandler):
     template = jinja_environment.get_template('templates/nearby.html')
     self.response.out.write(template.render(values))
 
+class UsersHandler(webapp2.RequestHandler):
+  def get(self):
+    user = get_current_user()
+    counts = get_user_counts()
+    values = {'logged_in' : user is not None, 'users' : counts}
+    template = jinja_environment.get_template('templates/people.html')
+    self.response.out.write(template.render(values))
+
 class LandingHandler(webapp2.RequestHandler):
   def get(self):
     if get_current_user():
@@ -142,6 +155,7 @@ app = webapp2.WSGIApplication([
   ('/user',UserHandler),
   ('/profile',UserHandler),
   ('/nearby',NearbyHandler),
+  ('/people', UsersHandler),
   webapp2.Route('/pub/<pub_id>/visitors', handler=PubVisitsHandler),
   webapp2.Route('/visited/<user_id>', handler=VisitedHandler),
   webapp2.Route('/user/<user_id>',handler=UserHandler),

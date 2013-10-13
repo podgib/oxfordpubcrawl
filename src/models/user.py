@@ -23,7 +23,6 @@ def get_current_user():
       return User.all().filter('google_user =', dev_user).get()
   return None
 
-
 def get_token():
   request = webapp2.get_request()
   token = request.cookies.get("session")

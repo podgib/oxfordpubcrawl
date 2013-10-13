@@ -21,6 +21,7 @@ class SetVisitHandler(webapp2.RequestHandler):
     visit.put()
     memcache.delete('visited-' + str(user.key().id()))
     memcache.delete('not-visited-' + str(user.key().id()))
+    memcache.delete('user-counts')
 
 class ClosestHandler(webapp2.RequestHandler):
   def get(self):

@@ -21,7 +21,8 @@
       <li data-role="list-header" role="heading" data-icon="delete">
         <a data-rel="close">Close</a>
       </li>
-      <li><a href="/nearby">See nearby pubs</a></li>
+      <li data-icon="false"><a href="/nearby" data-ajax="false">See nearby pubs</a></li>
+      <li data-icon="false"><a href="/people" data-ajax="false">People</a></li>
       {% if logged_in %}
       <li data-icon="false">
         <a href="/profile" data-transition="slide" data-ajax="false">
