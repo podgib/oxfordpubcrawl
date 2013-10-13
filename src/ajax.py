@@ -34,7 +34,7 @@ class ClosestHandler(webapp2.RequestHandler):
         visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
         visits = sorted(visits, key = lambda v: v.pub.name.lower())
         memcache.set('not-visited-' + str(user.key().id()), visits)
-      visits = sorted(visits, key=lambda v: v.pub.distance(lat, long))[0:5]
+      visits = sorted(visits, key=lambda v: v.pub.distance(lat, long))[0:10]
       pubs = [v.pub.toDictionary() for v in visits]
     else:
       pubs = memcache.get('all-pubs-list')
@@ -42,7 +42,7 @@ class ClosestHandler(webapp2.RequestHandler):
         pubs = Pub.all().fetch(500)
         pubs = sorted(pubs, key = lambda p: p.name.lower())
         memcache.set('all-pubs-list', pubs)
-      pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:5]
+      pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:10]
       pubs = [p.toDictionary() for p in pubs]
 
     self.response.out.write(json.dumps(pubs))
