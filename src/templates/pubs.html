@@ -6,7 +6,7 @@
 <a href='/auth/login'>Login or Sign Up to track your pub visits</a>
 
 <h1>All Pubs</h1>
-<ul data-role="listview">
+<ul data-role="listview" data-filter="true" data-filter-placeholder="Search..." data-filter-theme="a">
   {% for pub in pubs %}
   <li><a href='/pub/{{pub.key().id()}}'>{{pub.name}}</a></li>
   {% endfor %}
