@@ -8,7 +8,7 @@ DEV_USERS = False
 class User(db.Model):
   name = db.StringProperty(required=True)
   fb_id = db.StringProperty()
-  google_user = db.UserProperty()
+  dev_user = db.UserProperty()
   email = db.EmailProperty()
   
 def get_current_user():
@@ -20,7 +20,7 @@ def get_current_user():
   elif DEV_USERS:
     dev_user = users.get_current_user()
     if dev_user:
-      return User.all().filter('google_user =', dev_user).get()
+      return User.all().filter('dev_user =', dev_user).get()
   return None
 
 def get_token():

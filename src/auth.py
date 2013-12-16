@@ -69,7 +69,7 @@ class DevLoginHandler(webapp2.RequestHandler):
     devuser = users.get_current_user()
     if not devuser:
       return self.redirect('/auth/login')
-    user = User.all().filter('google_user =', devuser).get()
+    user = User.all().filter('dev_user =', devuser).get()
     if not user:
       template = jinja_environment.get_template('templates/signup.html')
       self.response.out.write(template.render({}))
@@ -99,7 +99,7 @@ class SignupHandler(webapp2.RequestHandler):
       values = {'name':name,'email':email,'session':token,'errormsg':'Please supply a name and email address'}
       self.response.out.write(template.render(values))
       return
-    user = User(name=name,email=email,google_user=dev_user,fb_id=fb_id)
+    user = User(name=name,email=email,dev_user=dev_user,fb_id=fb_id)
     user.put()
 
     pubs = Pub.all().run()
