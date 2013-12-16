@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 from google.appengine.api import memcache
+from google.appengine.api import mail
 
 import webapp2
 import jinja2
 import os
+import logging
 
 from models.pub import *
 from models.visit import Visit
@@ -144,6 +146,29 @@ class ReportHandler(webapp2.RequestHandler):
     user = get_current_user()
     values = {'logged_in' : user is not None}
     template = jinja_environment.get_template('templates/report.html')
+    self.response.out.write(template.render(values))
+
+  def post(self):
+    user = get_current_user()
+    email = self.request.get("email")
+    if user and not email:
+      email = user.email
+    if not email:
+      email = "noreply@example.com"
+    text = self.request.get("text")
+    error_message = ''
+    if not text:
+      success = False
+      error_message = "You didn't submit any text in your report."
+    else:
+      success = True
+      subject = "Report from Oxford Pub Crawl"
+      message = mail.EmailMessage(sender=email, subject=subject, to="pascoeg@gmail.com")
+      message.body = text
+      logging.info("[REPORT] report received from " + email)
+      message.send()
+    values = {'logged_in': user is not None, 'success': success, 'error_message': error_message}
+    template = jinja_environment.get_template('templates/report_sent.html')
     self.response.out.write(template.render(values))
 
 class LandingHandler(webapp2.RequestHandler):
