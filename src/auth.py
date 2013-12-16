@@ -20,7 +20,7 @@ class LoginHandler(webapp2.RequestHandler):
     if get_current_user():
       return self.redirect('/')
     template = jinja_environment.get_template('templates/login.html')
-    values = {'login_url':users.create_login_url('/auth/glogin'), 'show_g_login':users.is_current_user_admin()}
+    values = {'login_url':users.create_login_url('/auth/glogin'), 'show_g_login':GOOGLE_USERS}
     self.response.out.write(template.render(values))
 
 class FbLoginHandler(webapp2.RequestHandler):
