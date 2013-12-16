@@ -1,0 +1,18 @@
+{% extends "templates/layout.html" %}
+{% block content %}
+<h2>Report a problem</h2>
+<p>Something missing? Pub in the wrong place? Let us know below!</p>
+
+<form action="/report" method="POST">
+  {% if not logged_in %}
+  <div data-role="fieldcontain">
+    <label for="email">Email (optional):</label>
+    <input id="email" type="email" name="email" />
+  </div>
+  {% endif %}
+  <div data-role="fieldcontain">
+    <label for="text">What's wrong?</label>
+    <textarea id="text" name="text"></textarea>
+  </div>
+</form>
+{% endblock content %}
