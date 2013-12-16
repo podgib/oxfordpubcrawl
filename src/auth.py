@@ -20,7 +20,7 @@ class LoginHandler(webapp2.RequestHandler):
     if get_current_user():
       return self.redirect('/')
     template = jinja_environment.get_template('templates/login.html')
-    values = {'login_url':users.create_login_url('/auth/devlogin'), 'show_dev_login':DEV_USERS}
+    values = {'login_url':users.create_login_url('/auth/glogin'), 'show_g_login':users.is_current_user_admin()}
     self.response.out.write(template.render(values))
 
 class FbLoginHandler(webapp2.RequestHandler):
@@ -60,16 +60,16 @@ class FbLoginHandler(webapp2.RequestHandler):
       template=jinja_environment.get_template('templates/signup.html')
       self.response.out.write(template.render(template_values))
 
-class DevLoginHandler(webapp2.RequestHandler):
+class GoogleLoginHandler(webapp2.RequestHandler):
   def get(self):
-    if not DEV_USERS:
+    if not GOOGLE_USERS:
       return self.redirect('/login')
     if get_current_user():
       return self.redirect('/')
-    devuser = users.get_current_user()
-    if not devuser:
+    guser = users.get_current_user()
+    if not guser:
       return self.redirect('/auth/login')
-    user = User.all().filter('dev_user =', devuser).get()
+    user = User.all().filter('google_user =', guser).get()
     if not user:
       template = jinja_environment.get_template('templates/signup.html')
       self.response.out.write(template.render({}))
@@ -84,13 +84,13 @@ class SignupHandler(webapp2.RequestHandler):
       if not session:
         return self.redirect('/auth/login')
       fb_id = session.fb_id
-      dev_user = None
+      g_user = None
     else:
-      if not DEV_USERS:
+      if not GOOGLE_USERS:
         return self.redirect('/auth/login')
       fb_id = None
-      dev_user = users.get_current_user()
-      if not dev_user:
+      g_user = users.get_current_user()
+      if not g_user:
         return self.redirect('/auth/login')
     name = self.request.get('name')
     email = self.request.get('email')
@@ -99,7 +99,7 @@ class SignupHandler(webapp2.RequestHandler):
       values = {'name':name,'email':email,'session':token,'errormsg':'Please supply a name and email address'}
       self.response.out.write(template.render(values))
       return
-    user = User(name=name,email=email,dev_user=dev_user,fb_id=fb_id)
+    user = User(name=name,email=email,google_user=g_user,fb_id=fb_id)
     user.put()
 
     pubs = Pub.all().run()
@@ -119,7 +119,7 @@ class LogoutHandler(webapp2.RequestHandler):
   def get(self):
     if not get_current_user():
       return self.redirect('/')
-    if DEV_USERS and users.get_current_user():
+    if GOOGLE_USERS and users.get_current_user():
       self.redirect(users.create_logout_url('/'))
     else:
       try:
@@ -135,4 +135,4 @@ app = webapp2.WSGIApplication([
   ('/auth/fblogin',FbLoginHandler),
   ('/auth/signup',SignupHandler),
   ('/auth/logout',LogoutHandler),
-  ('/auth/devlogin',DevLoginHandler)],debug=True)
+  ('/auth/glogin',GoogleLoginHandler)],debug=True)
