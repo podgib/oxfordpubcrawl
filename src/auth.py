@@ -5,6 +5,7 @@ import datetime
 import webapp2
 import jinja2
 import os
+import cgi
 
 from google.appengine.api import users
 
@@ -92,8 +93,8 @@ class SignupHandler(webapp2.RequestHandler):
       g_user = users.get_current_user()
       if not g_user:
         return self.redirect('/auth/login')
-    name = self.request.get('name')
-    email = self.request.get('email')
+    name = cgi.escape(self.request.get('name'))
+    email = cgi.escape(self.request.get('email'))
     if not name or not email:
       template = jinja_environment.get_template('templates/signup.html')
       values = {'name':name,'email':email,'session':token,'errormsg':'Please supply a name and email address'}

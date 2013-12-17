@@ -6,6 +6,7 @@ import webapp2
 import jinja2
 import os
 import logging
+import cgi
 
 from models.pub import *
 from models.visit import Visit
@@ -152,7 +153,7 @@ class ReportHandler(webapp2.RequestHandler):
     user = get_current_user()
     email = self.request.get("email")
     if user and not email:
-      email = user.email
+      email = cgi.escape(user.email)
     if not email:
       email = "noreply@example.com"
     text = self.request.get("text")
