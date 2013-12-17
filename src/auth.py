@@ -28,7 +28,7 @@ class FbLoginHandler(webapp2.RequestHandler):
   def get(self):
     if get_current_user():
       return self.redirect('/')
-    fbtoken=self.request.get('token')
+    fbtoken=cgi.escape(self.request.get('token'))
     if not fbtoken:
       self.redirect("/")
       return
