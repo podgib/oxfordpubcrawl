@@ -155,8 +155,8 @@ class ReportHandler(webapp2.RequestHandler):
     if user and not email:
       email = cgi.escape(user.email)
     if not email:
-      email = "noreply@example.com"
-    text = self.request.get("text")
+      email = "anonymous"
+    text = cgi.escape(self.request.get("text"))
     error_message = ''
     if not text:
       success = False
@@ -164,8 +164,10 @@ class ReportHandler(webapp2.RequestHandler):
     else:
       success = True
       subject = "Report from Oxford Pub Crawl"
-      message = mail.EmailMessage(sender=email, subject=subject, to="pascoeg@gmail.com")
-      message.body = text
+      message = mail.EmailMessage(sender="no-reply@oxfordpubcrawl.appspotmail.com",
+                                  subject=subject,
+                                  to="pascoeg@gmail.com")
+      message.body = "Report submitted by " + email + ": \n\n" + text
       logging.info("[REPORT] report received from " + email)
       message.send()
     values = {'logged_in': user is not None, 'success': success, 'error_message': error_message}
