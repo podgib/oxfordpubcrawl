@@ -31,3 +31,11 @@ libraries:
   
 - name: jinja2
   version: latest
+
+admin_console:
+  pages:
+    - name: Add Pub
+      url: /admin/addpub
+    - name: Clear Invalid Visits
+      url: /admin/clean
+
