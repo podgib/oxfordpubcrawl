@@ -1,7 +1,7 @@
 {% extends "templates/layout.html" %}
 {% block content %}
-<h2>Report a problem</h2>
-<p>Something missing? Pub in the wrong place? Let us know below!</p>
+<h2>Send Feedback</h2>
+<p>Something missing? Pub in the wrong place? Or just want to tell use we're awesome? Let us know below!</p>
 
 <form action="/report" method="POST">
   {% if not logged_in %}
@@ -11,7 +11,7 @@
   </div>
   {% endif %}
   <div data-role="fieldcontain">
-    <label for="text">What's wrong?</label>
+    <label for="text">What's up?</label>
     <textarea id="text" name="text"></textarea>
   </div>
   <input type="submit" value="Go!" />
