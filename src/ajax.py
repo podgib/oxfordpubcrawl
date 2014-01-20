@@ -65,7 +65,7 @@ class ClosestHandler(webapp2.RequestHandler):
         memcache.set('all-pubs-list', pubs)
       if user and not user.show_colleges:
         pubs = [p for p in pubs if not p.is_college]
-      pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:10]
+      pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:20]
       pubs = [p.toDictionary() for p in pubs]
 
     self.response.out.write(json.dumps(pubs))
