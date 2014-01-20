@@ -10,6 +10,8 @@ class User(db.Model):
   fb_id = db.StringProperty()
   google_user = db.UserProperty()
   email = db.EmailProperty()
+  show_colleges = db.BooleanProperty(default=True)
+  hide_visited = db.BooleanProperty(default=True)
   
 def get_current_user():
   token = get_token()

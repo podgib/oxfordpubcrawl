@@ -55,11 +55,11 @@ class CleanPubsHandler(webapp2.RequestHandler):
 
 class UpdateSchemaHandler(webapp2.RequestHandler):
   def get(self):
-    pubs = Pub.all().run()
-    for p in pubs:
-      p.latitude = None
-      p.longitude = None
-      p.put()
+    users = User.all().run()
+    for u in users:
+      u.show_colleges = True
+      u.hide_visited = True
+      u.put()
     self.response.out.write('success')
 
 

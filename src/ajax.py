@@ -28,7 +28,14 @@ class ClosestHandler(webapp2.RequestHandler):
     user = get_current_user()
     lat=float(self.request.get('lat'))
     long=float(self.request.get('long'))
-    if user:
+    if self.request.get('show-all'):
+      user.hide_visited = False
+      user.save()
+    if self.request.get('hide-visited'):
+      user.hide_visted = True
+      user.save()
+
+    if user and user.hide_visited:
       visits = memcache.get('not-visited-' + str(user.key().id()))
       if not visits:
         visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
