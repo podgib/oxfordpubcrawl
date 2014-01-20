@@ -6,11 +6,11 @@
 <div class="ui-grid-a">
   <div class="ui-block-a">
     <label for="visited-checkbox">Hide Visited</label>
-    <input type="checkbox" id="visited-checkbox" {%- if user.hide_visited %}checked{% endif %} />
+    <input type="checkbox" id="visited-checkbox" onchange="hideVisited()" {%- if user.hide_visited %}checked{% endif %} />
   </div>
   <div class="ui-block-b">
     <label for="colleges-checkbox">Show Colleges</label>
-    <input type="checkbox" id="colleges-checkbox" {%- if user.show_colleges %}checked{% endif %} />
+    <input type="checkbox" id="colleges-checkbox" onchange="showColleges()" {%- if user.show_colleges %}checked{% endif %} />
   </div>
 </div>
 </form>
@@ -22,12 +22,30 @@
 
 <img id="loader" src="/assets/images/ajax-loader.gif"/>
 <div id='loc-error'></div>
+
+<div style="clear: both">&nbsp;</div>
 <ul id="pub-list" data-role="listview">
 </ul>
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
+  var visitedHidden = {% if user.hide_visited %}true{% else %}false{% endif %};
+  var collegesShown = {% if user.show_colleges %}true{% else %}false{% endif %};
+  var location_;
+
+  function hideVisited() {
+    visitedHidden = $("#visited-checkbox").is(':checked');
+    $('#loader').show();
+    showPubs(location_);
+  }
+
+  function showColleges() {
+    collegesShown = $("#colleges-checkbox").is(':checked');
+    $('#loader').show();
+    showPubs(location_);
+  }
+
   function getLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(showPubs, locError, {'timeout':20000});
@@ -38,7 +56,15 @@
   }
 
   function showPubs(location) {
-    $.get('/ajax/nearby?lat=' + location.coords.latitude + '&long=' + location.coords.longitude, function(data) {
+    location_ = location;
+    var url = '/ajax/nearby?lat=' + location.coords.latitude + '&long=' + location.coords.longitude;
+    if (visitedHidden) {
+      url += "&hide-visited=1";
+    }
+    if (collegesShown) {
+      url += "&show-colleges=1";
+    }
+    $.get(url, function(data) {
       var list = $('#pub-list');
       var json = $.parseJSON(data);
       var html = '';

@@ -71,10 +71,20 @@ class DeletePubHandler(webapp2.RequestHandler):
       v.delete()
     pub.delete()
 
+class SetCollegesHandler(webapp2.RequestHandler):
+  def get(self):
+    pubs = Pub.all().run()
+    for p in pubs:
+      if ' College' in p.name or ' Hall' in p.name:
+        p.is_college = True
+        p.put()
+    self.response.out.write('success')
+
 
 app = webapp2.WSGIApplication([
   ('/admin/addpub',AddPubHandler),
   ('/admin/updateschema',UpdateSchemaHandler),
   ('/admin/cleanpubs',CleanPubsHandler),
   ('/admin/deletepub',DeletePubHandler),
+  ('/admin/colleges', SetCollegesHandler),
   ('/admin/clean', CleanVisitsHandler)],debug=True)

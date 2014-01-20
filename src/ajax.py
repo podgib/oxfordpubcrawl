@@ -28,12 +28,22 @@ class ClosestHandler(webapp2.RequestHandler):
     user = get_current_user()
     lat=float(self.request.get('lat'))
     long=float(self.request.get('long'))
-    if self.request.get('show-all'):
-      user.hide_visited = False
-      user.save()
+    if self.request.get('show-colleges'):
+      if not user.show_colleges:
+        memcache.delete('not-visited-' + str(user.key().id()))
+        user.show_colleges = True
+        user.put()
+    elif user.show_colleges:
+      memcache.delete('not-visited-' + str(user.key().id()))
+      user.show_colleges = False
+      user.put()
     if self.request.get('hide-visited'):
-      user.hide_visted = True
-      user.save()
+      if not user.hide_visited:
+        user.hide_visited = True
+        user.put()
+    elif user.hide_visited:
+      user.hide_visited = False
+      user.put()
 
     if user and user.hide_visited:
       visits = memcache.get('not-visited-' + str(user.key().id()))
@@ -41,14 +51,20 @@ class ClosestHandler(webapp2.RequestHandler):
         visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
         visits = sorted(visits, key = lambda v: v.pub.name.lower())
         memcache.set('not-visited-' + str(user.key().id()), visits)
-      visits = sorted(visits, key=lambda v: v.pub.distance(lat, long))[0:10]
-      pubs = [v.pub.toDictionary() for v in visits]
+      if user.show_colleges:
+        pubs = [v.pub for v in visits]
+      else:
+        pubs = [v.pub for v in visits if not v.pub.is_college]
+      pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:10]
+      pubs = [pub.toDictionary() for pub in pubs]
     else:
       pubs = memcache.get('all-pubs-list')
       if not pubs:
         pubs = Pub.all().fetch(500)
         pubs = sorted(pubs, key = lambda p: p.name.lower())
         memcache.set('all-pubs-list', pubs)
+      if user and not user.show_colleges:
+        pubs = [p for p in pubs if not p.is_college]
       pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:10]
       pubs = [p.toDictionary() for p in pubs]
 
