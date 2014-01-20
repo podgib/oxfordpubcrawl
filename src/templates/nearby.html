@@ -48,7 +48,7 @@
 
   function getLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(showPubs, locError, {'timeout':20000});
+      navigator.geolocation.getCurrentPosition(showPubs, locError, {'timeout':20000});
     } else {
       $('#loc-error').html('<p>Your browser does not support geolocation</p>');
       $('#loader').hide();
