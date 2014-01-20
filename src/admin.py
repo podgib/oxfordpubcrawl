@@ -62,9 +62,19 @@ class UpdateSchemaHandler(webapp2.RequestHandler):
       u.put()
     self.response.out.write('success')
 
+class DeletePubHandler(webapp2.RequestHandler):
+  def get(self):
+    pub_id = self.request.get('pub')
+    pub = Pub.get_by_id(pub_id)
+    visits = Visit.all().filter('pub =', pub).run()
+    for v in visits:
+      v.delete()
+    pub.delete()
+
 
 app = webapp2.WSGIApplication([
   ('/admin/addpub',AddPubHandler),
   ('/admin/updateschema',UpdateSchemaHandler),
   ('/admin/cleanpubs',CleanPubsHandler),
+  ('/admin/deletepub',DeletePubHandler),
   ('/admin/clean', CleanVisitsHandler)],debug=True)
