@@ -33,7 +33,7 @@ class ClosestHandler(webapp2.RequestHandler):
         memcache.delete('not-visited-' + str(user.key().id()))
         user.show_colleges = True
         user.put()
-    elif user.show_colleges:
+    elif user and user.show_colleges:
       memcache.delete('not-visited-' + str(user.key().id()))
       user.show_colleges = False
       user.put()
@@ -41,7 +41,7 @@ class ClosestHandler(webapp2.RequestHandler):
       if not user.hide_visited:
         user.hide_visited = True
         user.put()
-    elif user.hide_visited:
+    elif user and user.hide_visited:
       user.hide_visited = False
       user.put()
 
