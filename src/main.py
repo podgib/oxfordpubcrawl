@@ -19,7 +19,7 @@ class PubsHandler(webapp2.RequestHandler):
   def show_all_pubs(self):
     pubs = memcache.get('all-pubs-list')
     if not pubs:
-      pubs = Pub.all().order('name').fetch(500)
+      pubs = Pub.all().order('name').filter("closed =",False).fetch(500)
       memcache.set('all-pubs-list', pubs)
     values = {'pubs' : pubs, 'logged_in' : False}
     template = jinja_environment.get_template('templates/pubs.html')
@@ -92,6 +92,7 @@ class NotVisitedHandler(webapp2.RequestHandler):
     visits = memcache.get('not-visited-' + str(user.key().id()))
     if not visits:
       visits = Visit.all().ancestor(user).filter('visited =', False).fetch(500)
+      visits = [v for v in visits if not v.pub.closed]
       visits = sorted(visits, key = lambda v: v.pub.name.lower())
       memcache.set('not-visited-' + str(user.key().id()), visits)
     values = {'not_visited' : visits, 'user' : user, 'logged_in' : current_user is not None}

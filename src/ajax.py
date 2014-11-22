@@ -55,12 +55,13 @@ class ClosestHandler(webapp2.RequestHandler):
         pubs = [v.pub for v in visits]
       else:
         pubs = [v.pub for v in visits if not v.pub.is_college]
+      pubs = [p for p in pubs if not p.closed]
       pubs = sorted(pubs, key=lambda p: p.distance(lat, long))[0:20]
       pubs = [pub.toDictionary() for pub in pubs]
     else:
       pubs = memcache.get('all-pubs-list')
       if not pubs:
-        pubs = Pub.all().fetch(500)
+        pubs = Pub.all().filter('closed =', False).fetch(500)
         pubs = sorted(pubs, key = lambda p: p.name.lower())
         memcache.set('all-pubs-list', pubs)
       if user and not user.show_colleges:

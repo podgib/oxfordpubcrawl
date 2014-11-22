@@ -64,12 +64,19 @@ class UpdateSchemaHandler(webapp2.RequestHandler):
 
 class DeletePubHandler(webapp2.RequestHandler):
   def get(self):
-    pub_id = self.request.get('pub')
+    pub_id = int(self.request.get('pub'))
     pub = Pub.get_by_id(pub_id)
     visits = Visit.all().filter('pub =', pub).run()
     for v in visits:
       v.delete()
     pub.delete()
+
+class ClosePubHandler(webapp2.RequestHandler):
+  def get(self):
+    pub_id = int(self.request.get('pub'))
+    pub = Pub.get_by_id(pub_id)
+    pub.closed = True
+    pub.put()
 
 class SetCollegesHandler(webapp2.RequestHandler):
   def get(self):
@@ -86,5 +93,6 @@ app = webapp2.WSGIApplication([
   ('/admin/updateschema',UpdateSchemaHandler),
   ('/admin/cleanpubs',CleanPubsHandler),
   ('/admin/deletepub',DeletePubHandler),
+  ('/admin/closepub',ClosePubHandler),
   ('/admin/colleges', SetCollegesHandler),
   ('/admin/clean', CleanVisitsHandler)],debug=True)

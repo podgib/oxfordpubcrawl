@@ -6,6 +6,7 @@ class Pub(db.Model):
   latitude = db.FloatProperty()
   longitude = db.FloatProperty()
   is_college = db.BooleanProperty(default=False)
+  closed = db.BooleanProperty(default=False)
 
   def distance(self, lat, long):
     if not self.latitude or not self.longitude:
