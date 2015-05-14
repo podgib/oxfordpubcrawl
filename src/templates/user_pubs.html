@@ -6,9 +6,9 @@
 {% for visit in visited %}
 {% if loop.first %}
 {% if own_page %}
-<li data-role="list-divider" data-theme="b">Pubs I've Visited</li>
+<li data-role="list-divider" data-theme="b">Pubs I've Visited: {{ visited | length }}</li>
 {% else %}
-<li data-role="list-divider" data-theme="b">Pubs Visited by {{user.name}}</li>
+<li data-role="list-divider" data-theme="b">Pubs Visited by {{user.name}}: {{ visited | length }}</li>
 {% endif %}
 {% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
@@ -16,7 +16,7 @@
 
 {% for visit in not_visited %}
 {% if loop.first %}
-<li data-role="list-divider" data-theme="b">Still to Visit</li>
+<li data-role="list-divider" data-theme="b">Still to Visit: {{ not_visited | length }}</li>
 {% endif %}
   <li><a href='/pub/{{visit.pub.key().id()}}'>{{visit.pub.name}}</a></li>
 {% endfor %}
